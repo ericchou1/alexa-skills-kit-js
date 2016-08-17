@@ -459,6 +459,9 @@ function handleRepeatRequest(intent, session, callback) {
 function handleGetHelpRequest(intent, session, callback) {
     // Do not edit the help dialogue. This has been created by the Alexa team to demonstrate best practices.
 
+    // Set a flag to track that we're in teh Help state
+    session.attributes.userPromptedToContinue = true;
+
     var speechOutput = "To start a new game at any time, say, start new game. "
         + "To repeat the last element, say, repeat. "
         + "Would you like to keep playing?",
@@ -478,7 +481,13 @@ function handleFinishSessionRequest(intent, session, callback) {
 function isAnswerSlotValid(intent) {
     var answerSlotFilled = intent.slots && intent.slots.Answer && intent.slots.Answer.value;
     var answerSlotIsInt = answerSlotFilled && !isNaN(parseInt(intent.slots.Answer.value));
-    return 1;
+    
+    // Make sure slot is filled, not empty and not an integer in order to be valid
+    if (answerSlotFilled && !answerSlotIsInt) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 // ------- Helper functions to build responses -------
